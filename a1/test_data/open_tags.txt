@@ -1,0 +1,8 @@
+<Doc text=yes>
+<DocNo>11101</DocNo>
+<Text> <p>What is good my dudes</p> </Text>
+<Byline> <p> This is a badman </p></Byline>
+<Date>2019-11-01</Date>
+<Text> 1.01 -1.01111 -1111.1101 </Text>
+<Text> this'is'just'a'test' </Text>
+</Doc>

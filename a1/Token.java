@@ -1,5 +1,6 @@
 class Token {
 
+  public final static int ERROR = 0;
   public final static int OPENTAG = 1;
   public final static int CLOSETAG = 2;
   public final static int WORD = 3;
@@ -22,12 +23,14 @@ class Token {
 
   public String toString() {
     switch (m_type) {
-      case OPEN-TAG:
-        return "OPEN-TAG(" + m_value + ")"
+      case OPENTAG:
+        return "OPEN-" + m_value.toUpperCase();
+      case CLOSETAG:
+        return "CLOSE-" + m_value.toUpperCase();
       case WORD:
         return "WORD(" + m_value + ")";
       case NUMBER:
-        return "NUMBER(" + m_value) + ")";
+        return "NUMBER(" + m_value + ")";
       case APOSTROPHIZED:
         return "APOSTROPHIZED(" + m_value + ")";
       case HYPHENATED:

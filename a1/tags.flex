@@ -19,10 +19,75 @@ import java.util.ArrayList;
 
 %{
   private static ArrayList<String> tagStack = new ArrayList<String>();
+  private static String[] irreleventTags = { "Byline", "Correction", "Correction-Date", "Dateline", "DocID", "Graphic", "Section", "Subject", "Type" };
+  /**
+  * Returns the tag name of a passed-in tag for displaying purposes.
+  * @param tag The tag to get the name of.
+  * @return the name of the tag.
+  **/
+  private String getTagName(String tag) {
+    tag = tag.replace("<", "");
+    tag = tag.replace(">", "");
+    tag = tag.replace("/", "");
+    String[] splits = tag.split(" ");
+    if (splits.length > 1){
+      return splits[0];
+    } else {
+      return splits[0];
+    }
+  }
 
-  // static methods such as getTagName can be defined here as well
-  String getTagName()
+  private void push(String tag) {
+    tagStack.add(0, tag);
+  }
 
+  private String peek() {
+    if (tagStack.size() > 0) {
+      return tagStack.get(0);
+    }
+    else {
+      return null;
+    }
+  }
+
+  private void pop() {
+    tagStack.remove(0);
+  }
+
+  private Boolean checkClosingTag(String tag) {
+    tag = tag.replace("/", "");
+    if (!getTagName(tag).equals(peek())){
+      System.out.println("ERROR Tag mismatch. " + tag + " does not have a matching opening tag.");
+      return false;
+    }
+    return true;
+  }
+
+  private void printStack() {
+    for(String s : tagStack) {
+      System.out.println(s);
+    }
+  }
+
+  private Boolean containsIrrelevantTags() {
+    for (String tag : tagStack) {
+      for (String s : irreleventTags) {
+        if (tag.equals(s)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  private Boolean isIrrelevantTag(String tag) {
+    for (String s : irreleventTags) {
+      if (tag.equals(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
 %};
 
 
@@ -32,56 +97,72 @@ LineTerminator = \r|\n|\r\n
 
 /* White space is a line terminator, space, tab, or form feed. */
 WhiteSpace     = {LineTerminator} | [ \t\f]
-
-/* A literal integer is is a number beginning with a number between
-   one and nine followed by zero or more numbers between zero and nine
-   or just a zero.  */
 digit = [0-9]
-number = {digit}+
-
-/* A identifier integer is a word beginning a letter between A and
-   Z, a and z, or an underscore followed by zero or more letters
-   between A and Z, a and z, zero and nine, or an underscore. */
+number = [-]*{digit}+ | ([-]*{digit}+.{digit}+)
+tagPunctuation = [=\-'\"]
+puncutation = [-()*\\:;\"\'?\/.>,<]*
 letter = [a-zA-Z]
-word = [{letter}{digit}]+
-
+word = [a-zA-Z0-9]+
+apostrophized  = ({letter}+\'{letter}*)+
+attribute = [a-zA-Z0-9\"= ]
+hyphenated = ({word}-{word}*)+
 OpeningBrace = <
 ClosingBrace = >
-openTag = [{OpeningBrace}{word}{ClosingBrace}]
-closetag = [{OpeningBrace}/{word}{ClosingBrace}]
+openTag = {OpeningBrace}" "*{word}+{attribute}*{ClosingBrace}
+closeTag = {OpeningBrace}"/"{word}+{ClosingBrace}
 
 
 %%
 
-/*
-   This section contains regular expressions and actions, i.e. Java
-   code, that will be executed when the scanner matches the associated
-   regular expression. */
-{openingTag}       { return new Token(Token.OPENTAG, yytext(), yyline, yycolumn); }
-"if"               { return new Token(Token.IF, yytext(), yyline, yycolumn); }
-"then"             { return new Token(Token.THEN, yytext(), yyline, yycolumn); }
-"else"             { return new Token(Token.ELSE, yytext(), yyline, yycolumn); }
-"end"              { return new Token(Token.END, yytext(), yyline, yycolumn); }
-"repeat"           { return new Token(Token.REPEAT, yytext(), yyline, yycolumn); }
-"until"            { return new Token(Token.UNTIL, yytext(), yyline, yycolumn); }
-"read"             { return new Token(Token.READ, yytext(), yyline, yycolumn); }
-"write"            { return new Token(Token.WRITE, yytext(), yyline, yycolumn); }
-":="               { return new Token(Token.ASSIGN, yytext(), yyline, yycolumn); }
-"="                { return new Token(Token.EQ, yytext(), yyline, yycolumn); }
-"<"                { return new Token(Token.LT, yytext(), yyline, yycolumn); }
-">"                { return new Token(Token.GT, yytext(), yyline, yycolumn); }
-"+"                { return new Token(Token.PLUS, yytext(), yyline, yycolumn); }
-"-"                { return new Token(Token.MINUS, yytext(), yyline, yycolumn); }
-"*"                { return new Token(Token.TIMES, yytext(), yyline, yycolumn); }
-"/"                { return new Token(Token.OVER, yytext(), yyline, yycolumn); }
-"("                { return new Token(Token.LPAREN, yytext(), yyline, yycolumn); }
-")"                { return new Token(Token.RPAREN, yytext(), yyline, yycolumn); }
-";"                { return new Token(Token.SEMI, yytext(), yyline, yycolumn); }
-{number}           { return new Token(Token.NUM, yytext(), yyline, yycolumn); }
-{identifier}       { String name = yytext();
-                     if (name.length() > 8)
-                        name = name.substring(0, 8);
-                     return new Token(Token.ID, name, yyline, yycolumn); }
-{WhiteSpace}+      { /* skip whitespace */ }
-"{"[^\}]*"}"       { /* skip comments */ }
-.                  { return new Token(Token.ERROR, yytext(), yyline, yycolumn); }
+
+ // This section contains regular expressions and actions, i.e. Java
+ // code, that will be executed when the scanner matches the associated
+ // regular expression.
+
+{openTag}       {
+                  String tag = getTagName(yytext());
+                  push(tag);
+                  if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
+                    return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
+                  } else if (!isIrrelevantTag(tag) && !tag.toUpperCase().equals("P")) {
+                    return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
+                  }
+                }
+{closeTag}      {
+                  String tag = getTagName(yytext());
+                  if (checkClosingTag(yytext())) {
+                    pop();
+                    if ((!tag.toUpperCase().equals("P") && !containsIrrelevantTags()) && !isIrrelevantTag(getTagName(tag))) {
+                      return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
+                    } else if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
+                      return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
+                    }
+                  }
+                }
+{hyphenated}    {
+                  if (!isIrrelevantTag(peek())) {
+                    return new Token(Token.HYPHENATED, yytext(), yyline, yycolumn);
+                  }
+                }
+{puncutation}   {
+                  if (!isIrrelevantTag(peek())) {
+                    return new Token(Token.PUNCTUATION, yytext(), yyline, yycolumn);
+                  }
+                }
+{apostrophized} {
+                  if (!isIrrelevantTag(peek())) {
+                    return new Token(Token.APOSTROPHIZED, yytext(), yyline, yycolumn);
+                  }
+                }
+{number}        {
+                  if (!isIrrelevantTag(peek())) {
+                    return new Token(Token.NUMBER, yytext(), yyline, yycolumn);
+                  }
+                }
+{word}          {
+                  if (!isIrrelevantTag(peek()) && !containsIrrelevantTags()) {
+                    return new Token(Token.WORD, yytext(), yyline, yycolumn);
+                  }
+                }
+{WhiteSpace}    {}
+.               { return new Token(Token.ERROR, yytext(), yyline, yycolumn); }
