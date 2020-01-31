@@ -1,0 +1,18 @@
+<Text>
+this-is-a-hyphenated-string
+this-is-a-hyphenated-string-with-a-trailing-hyphen-
+---
+</Text>
+<Text>
+<p>
+this'is'an'apostrophised'string
+this'is'an'apostrophised'string'with'a'trailing'apopstrophe'
+'''
+'This should not be an apostrophised word.
+'89 should not be apostrophised.
+Plums'
+</p>
+</Text>
+<Text>
+father-in-law's
+</Text>

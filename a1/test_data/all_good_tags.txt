@@ -1,0 +1,12 @@
+<Doc text=yes>
+<DocNo>11101</DocNo>
+<Text> <p>What is good my dudes</p> </Text>
+<Date>2019-11-01</Date>
+<Text>'<p>'''</p>s---</Text>
+<Text>this-is-hyphen-test</text>
+<TEXT>this-is-another-hyphen-test-</Text>
+<Text> 1.01 -1.01111 -1111.1101 +1.01 +1 -1 +111.1111 +-11</Text>
+<Text> this'is'just'a'test' --</Text>
+<Headline align="center">This is the best news!</Headline>
+<Length border=120px align="center"> 12 </Length>
+</Doc>
