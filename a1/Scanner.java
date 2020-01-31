@@ -1,10 +1,19 @@
+/**
+* CIS*4650 Warmup Assignment - Tagged Document Tokenizer
+* Christian Cornelis
+* ccorneli@uoguelph.ca
+* S/N: 0939357
+* January 30th, 2020
+*
+* Scanner class that tokenizes input from STDIN
+**/
 import java.io.InputStreamReader;
 
 public class Scanner {
   private Lexer scanner = null;
 
   public Scanner( Lexer lexer ) {
-    scanner = lexer; 
+    scanner = lexer;
   }
 
   public Token getNextToken() throws java.io.IOException {

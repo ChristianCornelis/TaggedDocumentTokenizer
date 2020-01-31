@@ -1,5 +1,15 @@
+/**
+* CIS*4650 Warmup Assignment - Tagged Document Tokenizer
+* Christian Cornelis
+* ccorneli@uoguelph.ca
+* S/N: 0939357
+* January 30th, 2020
+*
+* Token class representing a matched token from the lexer.
+**/
 class Token {
 
+ //Token type definitions
   public final static int ERROR = 0;
   public final static int OPENTAG = 1;
   public final static int CLOSETAG = 2;
@@ -21,6 +31,10 @@ class Token {
     m_column = column;
   }
 
+  /**
+  * Yields a string of the token description.
+  * @return the string containing the description of the token
+  **/
   public String toString() {
     switch (m_type) {
       case OPENTAG:
