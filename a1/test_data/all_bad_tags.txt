@@ -12,11 +12,6 @@ This should not print
 sof-t-t-t-t
 sof-sof-sof-sof
 </Text>
-<Text>'<p>'''</p>s---</Text>
-<Text>this-is-hyphen-test</Text>
-<Text>this-is-another-hyphen-test-</Text>
-<Text> 1.01 -1.01111 -1111.1101 </Text>
-<Text> this'is'just'a'test' </Text>
 <Headline align="center">This is the best news!</Headline>
 <Length px=0.1124 align="center"> 12 </Length>
 <Correction> This is another badman </Correction>

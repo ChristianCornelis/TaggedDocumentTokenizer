@@ -10,6 +10,11 @@ this'is'an'apostrophised'string'with'a'trailing'apopstrophe'
 '''
 'This should not be an apostrophised word.
 '89 should not be apostrophised.
+father-in-law's
+qu'est-ce
+s's's's-s-s
+s-s-s-s's's
+s's's'-sss's-s's
 Plums'
 </p>
 </Text>

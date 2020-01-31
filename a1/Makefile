@@ -1,6 +1,5 @@
 JAVAC=javac
 JFLEX=jflex
-#JFLEX=/home/fsong/jflex/bin/jflex
 
 all: Token.class Lexer.class Scanner.class
 

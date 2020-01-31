@@ -7,6 +7,7 @@
 *
 * Scanner class that tokenizes input from STDIN
 **/
+
 import java.io.InputStreamReader;
 
 public class Scanner {
@@ -28,7 +29,7 @@ public class Scanner {
         System.out.println(tok);
     }
     catch (Exception e) {
-      System.out.println("Unexpected exception:");
+      System.err.println("Unexpected exception:");
       e.printStackTrace();
     }
   }

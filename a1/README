@@ -7,8 +7,9 @@
 **/
 
 Overview
-- This program reads in a a tagged SGML document, tokenizes all tags and their contents, and filters out irrelevant tags.
-- Irrelevant tags include "Byline", "Correction", "Correction-Date", "Dateline", "DocID", "Graphic", "Section", "Subject", and "Type"
+- This program reads in a tagged SGML document, tokenizes all tags and their contents, and filters out irrelevant tags.
+- Irrelevant tags include "Byline", "Correction", "Correction-Date", "Dateline", "DocID", "Graphic", "Section", "Subject", and "Type",
+  as well as any text outside of a tag.
 
 Building and Testing
 - The project can be compiled by running 'make' or 'make all'
@@ -21,10 +22,13 @@ Assumptions and Limitations:
 - Punctuation tokens will only contain a single character.
 - Hyphenated words that contain an apostrophe will be tokenized as APOSTROPHIZED,
   as per section 5 of the marking scheme.
+- Hyphenated and apostrophized tokens ending in an apostrophe or hyphen will have this last character
+  tokenized as PUNCTUATION(') or PUNCTUATION(-) respectively
 - Tokens such as "students'" will NOT be tokenized as APOSTROPHIZED(students'), but will be tokenized
   as WORD(student) PUNCTUATION('), as I assumed apostrophized strings need to be string sequences separated
   by apostrophes, as per section5 of the marking scheme.
 - '+' will be treated as punctuation
+- Tokens such as "s's's'-sss's-s's" will be broken up oddly into APOSTROPHIZED and PUNCTUATION tokens due to the limitations of my regex.
 
 Test Plan:
 - I began testing this tokenizer by creating test files in the test_data/ folder that
@@ -36,7 +40,8 @@ Test Plan:
   - Extra closing tag in file
   - Extra opening tag in file
   - Opening and closing tags with spaces before and after the tag name
-  - Opening tags containing attributes such as 'aligh="center"' and 'border=120px'
+  - Opening tags containing attributes such as 'align="center"' and 'border=120px'
+  - Tags with spaces around the opening and closing braces (ex. < Doc > and </  Doc  >)
 - I also compared the output of tokenizing the provided newsdata.txt file to that of the sample
   output provided using a string difference checker found at www.diffchecker.com
 - I performed all of the steps outlined above on the SoCS Linux servers to ensure that the
