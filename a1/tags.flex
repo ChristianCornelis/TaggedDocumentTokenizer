@@ -143,9 +143,9 @@ number = ("+"|"-"){digit}+ | (("+"|"-"){digit}+.{digit}+) | {digit}+ | ({digit}+
 punctuation = [-()*\\:;\"\'?\/.,\!\+]
 // Words can contain letters and numbers
 word = [a-zA-Z0-9]+
-// Apostrophised words can be chained together, or can by hyphonated words
-// ending in an apostrophe
-apostrophized  = {word}(\'{word})+ | {word}(-{word})+\'{word}*
+// Apostrophised words can be chained together, or can be hyphenated words that contain at least one apostrophe
+apostrophized  = {word}(\'{word})+ | {word}(("-"{word})*("\'"{word})+("-"{word}*))+ | {word}(("-"{word})*"\'"{word})
+// An attribute can contain letters, numbers, quotes, periods, and colons to account for HTML-esque attributes.
 attribute = [a-zA-Z0-9\"=.: ]
 hyphenated = {word}(-{word})+
 OpeningBrace = <
@@ -163,9 +163,13 @@ closeTag = {OpeningBrace}"/"" "*({word}[-]*)+" "*{ClosingBrace}
                   String tag = getTagName(yytext());
                   //push tag to top of stack
                   push(tag);
-                  if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
-                    return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
-                  } else if (!isIrrelevantTag(tag) && !tag.toUpperCase().equals("P")) {
+                  // if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
+                  //   return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
+                  // }
+                  // else if (!isIrrelevantTag(tag) && !tag.toUpperCase().equals("P")) {
+                  //   return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
+                  // }
+                  if (!containsIrrelevantTags() && !isIrrelevantTag(tag)) {
                     return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
                   }
                 }
@@ -175,9 +179,15 @@ closeTag = {OpeningBrace}"/"" "*({word}[-]*)+" "*{ClosingBrace}
                   // and pop the top element of the stack if they do, otherwise, an error is displayed.
                   if (checkClosingTag(yytext())) {
                     pop();
-                    if ((!tag.toUpperCase().equals("P")) && !isIrrelevantTag(getTagName(tag))) {
-                      return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
-                    } else if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
+                    //handling case for not a P tag
+                    // if ((!tag.toUpperCase().equals("P")) && !isIrrelevantTag(getTagName(tag))) {
+                    //   return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
+                    // }
+                    // //handling case for P tag when no irrelevant tags are on the stack
+                    // else if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
+                    //   return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
+                    // }
+                    if (!containsIrrelevantTags() && !isIrrelevantTag(tag)) {
                       return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
                     }
                   }
