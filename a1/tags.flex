@@ -161,14 +161,9 @@ closeTag = {OpeningBrace}"/"" "*({word}[-]*)+" "*{ClosingBrace}
 
 {openTag}       {
                   String tag = getTagName(yytext());
-                  //push tag to top of stack
+                  // push tag to top of stack
                   push(tag);
-                  // if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
-                  //   return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
-                  // }
-                  // else if (!isIrrelevantTag(tag) && !tag.toUpperCase().equals("P")) {
-                  //   return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
-                  // }
+                  // if the tag is relevant AND we aren't inside an irrelevant tag
                   if (!containsIrrelevantTags() && !isIrrelevantTag(tag)) {
                     return new Token(Token.OPENTAG, getTagName(yytext()), yyline, yycolumn);
                   }
@@ -179,14 +174,7 @@ closeTag = {OpeningBrace}"/"" "*({word}[-]*)+" "*{ClosingBrace}
                   // and pop the top element of the stack if they do, otherwise, an error is displayed.
                   if (checkClosingTag(yytext())) {
                     pop();
-                    //handling case for not a P tag
-                    // if ((!tag.toUpperCase().equals("P")) && !isIrrelevantTag(getTagName(tag))) {
-                    //   return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
-                    // }
-                    // //handling case for P tag when no irrelevant tags are on the stack
-                    // else if (tag.toUpperCase().equals("P") && !containsIrrelevantTags()) {
-                    //   return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
-                    // }
+                    //if the tag is relevant AND we aren't inside an irrelevant tag
                     if (!containsIrrelevantTags() && !isIrrelevantTag(tag)) {
                       return new Token(Token.CLOSETAG, getTagName(yytext()), yyline, yycolumn);
                     }

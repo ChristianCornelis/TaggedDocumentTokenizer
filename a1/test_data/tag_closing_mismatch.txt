@@ -4,7 +4,7 @@
 <Byline> <p> This is a badman </p></Byline>
 <Date>2019-11-01</Date>
 <Text>'<p>'''</p>s---</Text>
-<Byline>
+<Text>
 <Text>this-is-another-hyphen-test-</Text>
 <Text> 1.01 -1.01111 -1111.1101 </Text>
 <Text> this'is'just'a'test' </Text>

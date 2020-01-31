@@ -12,12 +12,18 @@ Overview
   as well as any text outside of a tag.
 
 Building and Testing
-- The project can be compiled by running 'make' or 'make all'
-- After the project is compiled, it can be ran tested by running the command
+- The scanner can be built by running 'make' or 'make all'
+- After the scanner is built, it can be tested by running the command
   'java Scanner < <PATH_TO_TAGGED_DOCUMENT'
-- To remove all compiled and generated files, run 'make clean'
+- To remove all compiled and generated files, run 'make clean'. Rebuilding the scanner can then be done
+  by running 'make' or 'make all' again.
 
 Assumptions and Limitations:
+- If an opening tag of an irrelevant tag does not have a matching closing tag, no other tokens will be output past this point.
+  This is because the irrelevant tag gets pushed to the stack, which is a violation of a precondition for producing opening tag tokens.
+- If an extra relevant opening tag is present, the highest-tier opening tag will not find a matching tag once the file is completely tokenized.
+- If an extra irrelevant opening tag is present, no tokens will be output after it due to it being on the stack without a closing tag, marking
+  all following tags nested inside it. The outermost tag will then fail to find a match because of this.
 - Assumed that all text is included inside of a tag. Any text found outside of a tag is ignored.
 - Punctuation tokens will only contain a single character.
 - Hyphenated words that contain an apostrophe will be tokenized as APOSTROPHIZED,
@@ -33,15 +39,20 @@ Assumptions and Limitations:
 Test Plan:
 - I began testing this tokenizer by creating test files in the test_data/ folder that
   contained all cases outlined in the marking scheme. This involved the following cases:
-  - File contains only relevent tags
-  - File contains only irrelevent tags
+  - Words not inside any tags
+  - File contains all relevent tags
+  - File contains all irrelevent tags
+  - Irrelevant tags nested inside relevant tags
+  - Relevant tags nested inside irrelevant tags
   - Hyphenated, apostrophised, and both hyphenated AND apostrophised words
   - <P> tags inside relevant and irrelevant tags
-  - Extra closing tag in file
-  - Extra opening tag in file
+  - Extra closing tags in file
+  - Extra opening tags in file
   - Opening and closing tags with spaces before and after the tag name
   - Opening tags containing attributes such as 'align="center"' and 'border=120px'
   - Tags with spaces around the opening and closing braces (ex. < Doc > and </  Doc  >)
+  - Numbers with decimals, + and - signs, both, and neither.
+- Tested that 'make', 'make all', and 'make clean' commands all worked as expected
 - I also compared the output of tokenizing the provided newsdata.txt file to that of the sample
   output provided using a string difference checker found at www.diffchecker.com
 - I performed all of the steps outlined above on the SoCS Linux servers to ensure that the
